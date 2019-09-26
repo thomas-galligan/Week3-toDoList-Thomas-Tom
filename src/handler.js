@@ -46,7 +46,6 @@ const handler = (request, response) => {
 			newItem.dateEdited = dateNow.toUTCString();
 
 			toDoList.push(newItem);
-			console.log(toDoList);
 
 			response.writeHead(200, { "Content-Type": "text/html" });
 			response.end("<h1>Successful POST request</h1>");
@@ -85,9 +84,9 @@ const handler = (request, response) => {
 	} else if (endpoint.indexOf("sort") !== -1) {
 		const method = endpoint.split("=")[1]; // get method for sorting
 		if (method === "dateCreated") {
-			console.log(sort(dateCreated, toDoList));
+			console.log(sort("dateCreated", toDoList));
 		} else if (method === "dateEdited") {
-			console.log(sort(dateEdited, toDoList));
+			console.log(sort("dateEdited", toDoList));
 		}
 		response.writeHead(200, { "Content-Type": "text/html" });
 		response.end("<h1>Successful sort</h1>");
