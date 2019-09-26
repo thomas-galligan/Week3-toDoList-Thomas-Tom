@@ -2,7 +2,7 @@ const querystring = require("querystring");
 
 let toDoList = [];
 
-const sort = (method, arr) => {
+const sortByDate = (method, arr) => {
 	// method should be either dateCreated or dateEdited
 	const newArr = [...arr];
 
@@ -13,6 +13,14 @@ const sort = (method, arr) => {
 	});
 
 	return newArr;
+};
+
+const sortByStatus = arr => {
+	const trueArr = arr.filter(obj => obj.status === true);
+
+	const falseArr = arr.filter(obj => obj.status === false);
+
+	return [trueArr, falseArr];
 };
 
 const handler = (request, response) => {
@@ -46,6 +54,7 @@ const handler = (request, response) => {
 			newItem.dateEdited = dateNow.toUTCString();
 
 			toDoList.push(newItem);
+			console.log(toDoList);
 
 			response.writeHead(200, { "Content-Type": "text/html" });
 			response.end("<h1>Successful POST request</h1>");
@@ -83,10 +92,15 @@ const handler = (request, response) => {
 		});
 	} else if (endpoint.indexOf("sort") !== -1) {
 		const method = endpoint.split("=")[1]; // get method for sorting
-		if (method === "dateCreated") {
-			console.log(sort("dateCreated", toDoList));
-		} else if (method === "dateEdited") {
-			console.log(sort("dateEdited", toDoList));
+		if (method === "dateCreated" || method === "dateEdited") {
+			const sortedToDoList = sortByDate(method, toDoList);
+			console.log(sortedToDoList);
+		} else if (method === "status") {
+			request.on("end", () => {
+				[completeItems, incompleteItems] = sortByStatus(toDoList);
+				console.log("completed: ", completeItems);
+				console.log("not completed: ", incompleteItems);
+			});
 		}
 		response.writeHead(200, { "Content-Type": "text/html" });
 		response.end("<h1>Successful sort</h1>");
