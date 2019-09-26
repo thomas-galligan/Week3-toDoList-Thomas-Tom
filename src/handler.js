@@ -2,6 +2,19 @@ const querystring = require("querystring");
 
 let toDoList = [];
 
+const sort = (method, arr) => {
+	// method should be either dateCreated or dateEdited
+	const newArr = [...arr];
+
+	newArr.sort((a, b) => {
+		const dateA = new Date(a[method]);
+		const dateB = new Date(b[method]);
+		return dateB - dateA;
+	});
+
+	return newArr;
+};
+
 const handler = (request, response) => {
 	const endpoint = request.url;
 
@@ -64,9 +77,20 @@ const handler = (request, response) => {
 			id = requestInfo.id;
 			newStatus = requestInfo.status;
 			toDoList[id].status = Boolean(newStatus);
+			toDoList[id].dateEdited = new Date().toUTCString();
+
 			response.writeHead(200, { "Content-Type": "text/html" });
 			response.end("<h1>Successful change of status</h1>");
 		});
+	} else if (endpoint.indexOf("sort") !== -1) {
+		const method = endpoint.split("=")[1]; // get method for sorting
+		if (method === "dateCreated") {
+			console.log(sort(dateCreated, toDoList));
+		} else if (method === "dateEdited") {
+			console.log(sort(dateEdited, toDoList));
+		}
+		response.writeHead(200, { "Content-Type": "text/html" });
+		response.end("<h1>Successful sort</h1>");
 	} else {
 		response.writeHead(404, { "Content-Type": "text/html" });
 		response.end("<h1>not create post endpoint</h1>"); // finish response
