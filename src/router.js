@@ -1,74 +1,75 @@
-const sortByDate = (method, toDoList) => {
-    // method should be either dateCreated or dateEdited
-    const newArr = [...toDoList];
+const querystring = require("querystring");
+const handler = require("./handler.js");
 
-    newArr.sort((a, b) => {
-        const dateA = new Date(a[method]);
-        const dateB = new Date(b[method]);
-        return dateB - dateA;
+let toDoList = [];
+
+const dataReader = (request, response, callback) => {
+    let allTheData = "";
+
+    request.on("data", chunckOfData => {
+        allTheData += chunckOfData;
     });
-
-    return newArr;
+    request.on("end", () => {
+        const convertedData = querystring.parse(allTheData);
+        newToDoList = callback(convertedData, toDoList);
+        response.writeHead(200, { "Content-Type": "text/html" });
+        response.end(`<h1>Successful ${request.method} request</h1>`);
+        toDoList = [...newToDoList];
+    });
 };
 
-const sortByStatus = toDoList => {
-    arr = [...toDoList];
-    const trueArr = arr.filter(obj => obj.status === true);
-
-    const falseArr = arr.filter(obj => obj.status === false);
-
-    return [trueArr, falseArr];
-};
-
-const addItem = (convertedData, toDoList) => {
-    console.log("to do list at start of addItem: ", toDoList);
-    let newToDoList = [...toDoList];
-    let newItem = {};
-    newItem.title = convertedData.title;
-
-    if (convertedData.status) {
-        newItem.status = convertedData.status;
+const router = (request, response) => {
+    const endpoint = request.url;
+    const reqMethod = request.method;
+    if (endpoint === "/get-list") {
+        if (reqMethod !== "GET") {
+            response.writeHead(400, { "Content-Type": "text/html" });
+            response.end(
+                "<h1>Bad request, please try again with a 'GET' method"
+            );
+            return;
+        }
+        console.log("Here is your to do list: ", toDoList);
+        response.writeHead(200, { "Content-Type": "text/html" });
+        response.end(`<h1>Successful GET request</h1>`);
+    } else if (handler.routes[endpoint]) {
+        if (reqMethod !== handler.routes[endpoint][1]) {
+            response.writeHead(400, { "Content-Type": "text/html" });
+            response.end(
+                `<h1>Bad request, please try again with a ${
+                    handler.routes[endpoint][1]
+                } method</h1>`
+            );
+            return;
+        }
+        dataReader(request, response, handler.routes[endpoint][0]);
+    } else if (endpoint.indexOf("sort") !== -1) {
+        if (method !== "GET") {
+            response.writeHead(400, { "Content-Type": "text/html" });
+            response.end(
+                "<h1>Bad request, please try again with a 'GET' method"
+            );
+            return;
+        }
+        const method = endpoint.split("=")[1]; // get method for sorting
+        if (method === "dateCreated" || method === "dateEdited") {
+            const sortedToDoList = handler.sortByDate(method, toDoList);
+            console.log(sortedToDoList);
+        } else if (method === "status") {
+            request.on("end", () => {
+                [completeItems, incompleteItems] = handler.sortByStatus(
+                    toDoList
+                );
+                console.log("completed: ", completeItems);
+                console.log("not completed: ", incompleteItems);
+            });
+        }
+        response.writeHead(200, { "Content-Type": "text/html" });
+        response.end("<h1>Successful sort</h1>");
     } else {
-        newItem.status = false;
+        response.writeHead(404, { "Content-Type": "text/html" });
+        response.end("<h1>404: not found</h1>"); // finish response
     }
-
-    const dateNow = new Date();
-    newItem.dateCreated = dateNow.toUTCString();
-    newItem.dateEdited = dateNow.toUTCString();
-    console.log("New item: ", newItem);
-    newToDoList.push(newItem);
-    console.log("pushed new todolist: ", newToDoList);
-    return newToDoList;
 };
 
-const deleteItem = (convertedData, toDoList) => {
-    let newToDoList = JSON.parse(JSON.stringify(toDoList));
-    id = convertedData.id;
-    newToDoList.splice(id, 1);
-    return newToDoList;
-};
-
-const changeStatus = (convertedData, toDoList) => {
-    let newToDoList = toDoList.slice(0);
-    const id = convertedData.id;
-    const newStatus = convertedData.status;
-    newToDoList[id].status = Boolean(newStatus);
-    newToDoList[id].dateEdited = new Date().toUTCString();
-
-    return newToDoList;
-};
-
-const routes = {
-    "/add-item": [addItem, "POST"],
-    "/delete-item": [deleteItem, "POST"],
-    "/change-status": [changeStatus, "PATCH"]
-};
-
-module.exports = {
-    routes,
-    changeStatus,
-    deleteItem,
-    addItem,
-    sortByDate,
-    sortByStatus
-};
+module.exports = router;

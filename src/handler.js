@@ -1,70 +1,71 @@
-const querystring = require("querystring");
-const router = require("./router.js");
+const sortByDate = (method, toDoList) => {
+    // method should be either dateCreated or dateEdited
+    const newArr = [...toDoList];
 
-let toDoList = [];
+    newArr.sort((a, b) => {
+        const dateA = new Date(a[method]);
+        const dateB = new Date(b[method]);
+        return dateB - dateA;
+    });
 
-const dataReader = (request, response, callback) => {
-	let allTheData = "";
-
-	request.on("data", chunckOfData => {
-		allTheData += chunckOfData;
-	});
-	request.on("end", () => {
-		const convertedData = querystring.parse(allTheData);
-		console.log(convertedData);
-		newToDoList = callback(convertedData, toDoList);
-		console.log("inside request.on: ", newToDoList);
-		response.writeHead(200, { "Content-Type": "text/html" });
-		response.end(`<h1>Successful ${request.method} request</h1>`);
-		toDoList = [...newToDoList];
-	});
+    return newArr;
 };
 
-const handler = (request, response) => {
-	const endpoint = request.url;
-	const reqMethod = request.method;
-	if (endpoint === "/get-list") {
-		if (reqMethod !== "GET") {
-			response.writeHead(400, { "Content-Type": "text/html" });
-			response.end("<h1>Bad request, please try again with a 'GET' method");
-			return;
-		}
-		console.log("Here is your to do list: ", toDoList);
-		response.writeHead(200, { "Content-Type": "text/html" });
-		response.end(`<h1>Successful GET request</h1>`);
-	} else if (router.routes[endpoint]) {
-		if (reqMethod !== router.routes[endpoint][1]) {
-			response.writeHead(400, { "Content-Type": "text/html" });
-			response.end(`<h1>Bad request, please try again with a ${router.routes[endpoint][1]} method</h1>`);
-			return;
-		}
-		dataReader(request, response, router.routes[endpoint][0]);
-	} else if (endpoint.indexOf("sort") !== -1) {
-		if (method !== "GET") {
-			response.writeHead(400, { "Content-Type": "text/html" });
-			response.end("<h1>Bad request, please try again with a 'GET' method");
-			return;
-		}
-		const method = endpoint.split("=")[1]; // get method for sorting
-		if (method === "dateCreated" || method === "dateEdited") {
-			const sortedToDoList = router.sortByDate(method, toDoList);
-			console.log(sortedToDoList);
-		} else if (method === "status") {
-			request.on("end", () => {
-				[completeItems, incompleteItems] = router.sortByStatus(toDoList);
-				console.log("completed: ", completeItems);
-				console.log("not completed: ", incompleteItems);
-			});
-		}
-		response.writeHead(200, { "Content-Type": "text/html" });
-		response.end("<h1>Successful sort</h1>");
-	} else {
-		response.writeHead(404, { "Content-Type": "text/html" });
-		response.end("<h1>404: not found</h1>"); // finish response
-	}
+const sortByStatus = toDoList => {
+    arr = [...toDoList];
+    const trueArr = arr.filter(obj => obj.status === true);
+
+    const falseArr = arr.filter(obj => obj.status === false);
+
+    return [trueArr, falseArr];
 };
 
-// module.exports = handler;
+const addItem = (requestObj, toDoList) => {
+    let newToDoList = [...toDoList];
+    let newItem = {};
+    newItem.title = requestObj.title;
+
+    if (requestObj.status) {
+        newItem.status = requestObj.status;
+    } else {
+        newItem.status = false;
+    }
+
+    const dateNow = new Date();
+    newItem.dateCreated = dateNow.toUTCString();
+    newItem.dateEdited = dateNow.toUTCString();
+    newToDoList.push(newItem);
+    return newToDoList;
+};
+
+const deleteItem = (requestObj, toDoList) => {
+    let newToDoList = JSON.parse(JSON.stringify(toDoList));
+    id = requestObj.id;
+    newToDoList.splice(id, 1);
+    return newToDoList;
+};
+
+const changeStatus = (requestObj, toDoList) => {
+    let newToDoList = [...toDoList];
+    const id = requestObj.id;
+    const newStatus = requestObj.status;
+    newToDoList[id].status = Boolean(newStatus);
+    newToDoList[id].dateEdited = new Date().toUTCString();
+
+    return newToDoList;
+};
+
+const routes = {
+    "/add-item": [addItem, "POST"],
+    "/delete-item": [deleteItem, "POST"],
+    "/change-status": [changeStatus, "PATCH"]
+};
+
 module.exports = {
-	handler,
+    routes,
+    changeStatus,
+    deleteItem,
+    addItem,
+    sortByDate,
+    sortByStatus
 };
