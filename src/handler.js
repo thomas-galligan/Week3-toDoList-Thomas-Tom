@@ -22,13 +22,29 @@ const dataReader = (request, response, callback) => {
 
 const handler = (request, response) => {
 	const endpoint = request.url;
+	const reqMethod = request.method;
 	if (endpoint === "/get-list") {
+		if (reqMethod !== "GET") {
+			response.writeHead(400, { "Content-Type": "text/html" });
+			response.end("<h1>Bad request, please try again with a 'GET' method");
+			return;
+		}
 		console.log("Here is your to do list: ", toDoList);
 		response.writeHead(200, { "Content-Type": "text/html" });
 		response.end(`<h1>Successful GET request</h1>`);
 	} else if (router.routes[endpoint]) {
+		if (reqMethod !== router.routes[endpoint][1]) {
+			response.writeHead(400, { "Content-Type": "text/html" });
+			response.end(`<h1>Bad request, please try again with a ${router.routes[endpoint][1]} method</h1>`);
+			return;
+		}
 		dataReader(request, response, router.routes[endpoint][0]);
 	} else if (endpoint.indexOf("sort") !== -1) {
+		if (method !== "GET") {
+			response.writeHead(400, { "Content-Type": "text/html" });
+			response.end("<h1>Bad request, please try again with a 'GET' method");
+			return;
+		}
 		const method = endpoint.split("=")[1]; // get method for sorting
 		if (method === "dateCreated" || method === "dateEdited") {
 			const sortedToDoList = router.sortByDate(method, toDoList);
@@ -44,7 +60,7 @@ const handler = (request, response) => {
 		response.end("<h1>Successful sort</h1>");
 	} else {
 		response.writeHead(404, { "Content-Type": "text/html" });
-		response.end("<h1>not create post endpoint</h1>"); // finish response
+		response.end("<h1>404: not found</h1>"); // finish response
 	}
 };
 
