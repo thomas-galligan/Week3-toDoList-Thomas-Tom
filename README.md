@@ -2,4 +2,4 @@
 To Do List project 
 
 ## Postman collection: 
-https://www.getpostman.com/collections/fe5a3a897589b371bf7f
+https://www.getpostman.com/collections/c427528af19a4ebc122f
