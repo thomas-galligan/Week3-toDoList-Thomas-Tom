@@ -20,13 +20,13 @@ const sortByStatus = toDoList => {
     return [trueArr, falseArr];
 };
 
-const addItem = (convertedData, toDoList) => {
+const addItem = (requestObj, toDoList) => {
     let newToDoList = [...toDoList];
     let newItem = {};
-    newItem.title = convertedData.title;
+    newItem.title = requestObj.title;
 
-    if (convertedData.status) {
-        newItem.status = convertedData.status;
+    if (requestObj.status) {
+        newItem.status = requestObj.status;
     } else {
         newItem.status = false;
     }
@@ -38,17 +38,17 @@ const addItem = (convertedData, toDoList) => {
     return newToDoList;
 };
 
-const deleteItem = (convertedData, toDoList) => {
+const deleteItem = (requestObj, toDoList) => {
     let newToDoList = JSON.parse(JSON.stringify(toDoList));
-    id = convertedData.id;
+    id = requestObj.id;
     newToDoList.splice(id, 1);
     return newToDoList;
 };
 
-const changeStatus = (convertedData, toDoList) => {
+const changeStatus = (requestObj, toDoList) => {
     let newToDoList = [...toDoList];
-    const id = convertedData.id;
-    const newStatus = convertedData.status;
+    const id = requestObj.id;
+    const newStatus = requestObj.status;
     newToDoList[id].status = Boolean(newStatus);
     newToDoList[id].dateEdited = new Date().toUTCString();
 
