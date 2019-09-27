@@ -52,12 +52,11 @@ const deleteItem = convertedData => {
 };
 
 const changeStatus = convertedData => {
-	let newToDoList = toDoList.slice(0);
+	let newToDoList = [...toDoList];
 	const id = convertedData.id;
 	const newStatus = convertedData.status;
 	newToDoList[id].status = Boolean(newStatus);
 	newToDoList[id].dateEdited = new Date().toUTCString();
-
 	return newToDoList;
 };
 
