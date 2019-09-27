@@ -145,7 +145,7 @@ test("Testing addItem()", t => {
 	const actual = functions.addItem(convertedData);
 	const expected = [
 		{
-			title: "take chinchilla for walk",
+			title: "take dog for walk",
 			status: true,
 			dateCreated: "Fri, 27 Sep 2019 08:52:20 GMT",
 			dateEdited: "Fri, 27 Sep 2019 08:52:25 GMT",
