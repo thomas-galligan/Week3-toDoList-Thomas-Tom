@@ -14,7 +14,7 @@ Current features include:
 ### Known issues:
 - Currently the to-do list is an array of objects, with each item being referenced by its index in the array. While this is a clean formulation on the back-end, it will pose problems during front-end integration as the item ids are not fixed. This issue will be fixed in version 1.1
 
-![A screenshot of a post request in postman](https://ibb.co/WxvrJc3 "Example POST request in postman")
+![A screenshot of a post request in postman](https://i.ibb.co/5MhQH59/Screenshot-2019-09-27-at-14-02-29.png "Example POST request in postman")
 
 ## Postman collection: 
 https://www.getpostman.com/collections/c427528af19a4ebc122f
