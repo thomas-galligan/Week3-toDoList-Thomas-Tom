@@ -49,9 +49,10 @@ const deleteItem = (convertedData, toDoList) => {
 };
 
 const changeStatus = (convertedData, toDoList) => {
-    let newToDoList = toDoList.slice(0);
-    const id = convertedData.id;
+    let newToDoList = [...toDoList];
+    const id = Number(convertedData.id);
     const newStatus = convertedData.status;
+    console.log(newToDoList[id]);
     newToDoList[id].status = Boolean(newStatus);
     newToDoList[id].dateEdited = new Date().toUTCString();
 
