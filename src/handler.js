@@ -69,6 +69,7 @@ const dataReader = (request, response, callback) => {
 	});
 	request.on("end", () => {
 		const convertedData = querystring.parse(allTheData);
+		console.log(convertedData);
 		newToDoList = callback(convertedData, toDoList);
 		console.log("inside request.on: ", newToDoList);
 		response.writeHead(200, { "Content-Type": "text/html" });
@@ -110,4 +111,12 @@ const handler = (request, response) => {
 	}
 };
 
-module.exports = handler;
+// module.exports = handler;
+module.exports = {
+	handler,
+	sortByStatus,
+	sortByDate,
+	addItem,
+	deleteItem,
+	changeStatus,
+};
