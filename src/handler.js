@@ -55,15 +55,27 @@ const changeStatus = (requestObj, toDoList) => {
     return newToDoList;
 };
 
+const changeTitle = (requestObj, toDoList) => {
+    let newToDoList = [...toDoList];
+    const id = requestObj.id;
+    const newTitle = requestObj.title;
+    newToDoList[is].title = newTitle;
+    newToDoList[id].dateEdited = new Date().toUTCString();
+
+    return newToDoList;
+};
+
 const routes = {
     "/add-item": [addItem, "POST"],
     "/delete-item": [deleteItem, "POST"],
-    "/change-status": [changeStatus, "PATCH"]
+    "/change-status": [changeStatus, "PATCH"],
+    "/change-title": [changeTitle, "PATCH"]
 };
 
 module.exports = {
     routes,
     changeStatus,
+    changeTitle,
     deleteItem,
     addItem,
     sortByDate,
