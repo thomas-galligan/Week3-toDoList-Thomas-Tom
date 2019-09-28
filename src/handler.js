@@ -59,7 +59,7 @@ const changeTitle = (requestObj, toDoList) => {
     let newToDoList = [...toDoList];
     const id = requestObj.id;
     const newTitle = requestObj.title;
-    newToDoList[is].title = newTitle;
+    newToDoList[id].title = newTitle;
     newToDoList[id].dateEdited = new Date().toUTCString();
 
     return newToDoList;
