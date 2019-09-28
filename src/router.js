@@ -53,11 +53,11 @@ const router = (request, response) => {
             );
             return;
         }
-        const method = endpoint.split("=")[1]; // get method for sorting
-        if (method === "dateCreated" || method === "dateEdited") {
-            const sortedToDoList = handler.sortByDate(method, toDoList);
+        const sortMethod = endpoint.split("=")[1]; // get method for sorting
+        if (sortMethod === "dateCreated" || sortMethod === "dateEdited") {
+            const sortedToDoList = handler.sortByDate(sortMethod, toDoList);
             console.log(sortedToDoList);
-        } else if (method === "status") {
+        } else if (sortMethod === "status") {
             request.on("end", () => {
                 [completeItems, incompleteItems] = handler.sortByStatus(
                     toDoList
