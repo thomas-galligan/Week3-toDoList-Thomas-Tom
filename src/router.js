@@ -46,7 +46,7 @@ const router = (request, response) => {
 
         dataReader(request, response, handler.routes[endpoint][0]);
     } else if (/^\/sort\?method=/.test(endpoint)) {
-        if (method !== "GET") {
+        if (reqMethod !== "GET") {
             response.writeHead(400, { "Content-Type": "text/html" });
             response.end(
                 "<h1>Bad request, please try again with a 'GET' method"
