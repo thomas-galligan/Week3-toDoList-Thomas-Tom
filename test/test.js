@@ -1,6 +1,6 @@
 const test = require("tape");
 // const { handler, sortByStatus, sortByDate, addItem, deleteItem, changeStatus } = require("../src/handler.js");
-const functions = require("../src/router.js");
+const functions = require("../src/handler.js");
 
 test("Testing Tape is working", t => {
     t.equal(1, 1, "One should equal one");

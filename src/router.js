@@ -21,6 +21,7 @@ const dataReader = (request, response, callback) => {
 const router = (request, response) => {
     const endpoint = request.url;
     const reqMethod = request.method;
+
     if (endpoint === "/get-list") {
         if (reqMethod !== "GET") {
             response.writeHead(400, { "Content-Type": "text/html" });
@@ -42,20 +43,21 @@ const router = (request, response) => {
             );
             return;
         }
+
         dataReader(request, response, handler.routes[endpoint][0]);
-    } else if (endpoint.indexOf("sort") !== -1) {
-        if (method !== "GET") {
+    } else if (/^\/sort\?method=/.test(endpoint)) {
+        if (reqMethod !== "GET") {
             response.writeHead(400, { "Content-Type": "text/html" });
             response.end(
                 "<h1>Bad request, please try again with a 'GET' method"
             );
             return;
         }
-        const method = endpoint.split("=")[1]; // get method for sorting
-        if (method === "dateCreated" || method === "dateEdited") {
-            const sortedToDoList = handler.sortByDate(method, toDoList);
+        const sortMethod = endpoint.split("=")[1]; // get method for sorting
+        if (sortMethod === "dateCreated" || sortMethod === "dateEdited") {
+            const sortedToDoList = handler.sortByDate(sortMethod, toDoList);
             console.log(sortedToDoList);
-        } else if (method === "status") {
+        } else if (sortMethod === "status") {
             request.on("end", () => {
                 [completeItems, incompleteItems] = handler.sortByStatus(
                     toDoList
