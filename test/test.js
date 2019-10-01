@@ -7,10 +7,10 @@ test("Testing Tape is working", t => {
 	t.end();
 });
 
-// test("Creating a failing test", t => {
-// 	t.equal(1, 2, "One should equal two(?!)");
-// 	t.end();
-// });
+test("Creating a failing test", t => {
+	t.equal(1, 2, "One should equal two(?!)");
+	t.end();
+});
 
 test("Testing sortByDate()", t => {
 	const arr = [
