@@ -1,5 +1,7 @@
 # Week3-toDoList-Thomas-Tom
 ### Authors: Thomas Kostrzewski & Tom Galligan
+![Build status](https://travis-ci.com/thomas-galligan/Week3-toDoList-Thomas-Tom.svg?branch=master)
+
 This is the backend of a To-Do web-app. We use node.js to construct an http server, which holds a to-do list. 
 
 The server accepts a variety of requests for managing the to-do list. A full collection of these, with examples, can be found in the Postman collection at the bottom of this README. You will need Postman (https://www.getpostman.com/) to run them. 
