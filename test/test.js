@@ -2,12 +2,12 @@ const test = require("tape");
 // const { handler, sortByStatus, sortByDate, addItem, deleteItem, changeStatus } = require("../src/handler.js");
 const functions = require("../src/handler.js");
 
-test("Testing Tape is working", t => {
+test("Testing Tape is working", function (t) {
     t.equal(1, 1, "One should equal one");
     t.end();
 });
 
-test("Testing sortByDate()", t => {
+test("Testing sortByDate()", function (t) {
     const arr = [
         {
             title: "take dog for walk",
